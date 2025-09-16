@@ -5,6 +5,7 @@ import "./styles.css";
 import type { MCPServersState } from "agents";
 import { agentFetch } from "agents/client";
 import { nanoid } from "nanoid";
+import Chat from "./Chat";
 
 let sessionId = localStorage.getItem("sessionId");
 if (!sessionId) {
@@ -124,35 +125,37 @@ function App() {
                 Authorize
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => {
+                agentFetch(
+                  {
+                    agent: "my-agent",
+                    host: agent.host,
+                    name: sessionId!,
+                    path: "remove-mcp"
+                  },
+                  {
+                    body: JSON.stringify({ id }),
+                    method: "POST"
+                  }
+                );
+                setMcpState((prev) => {
+                  const next = { ...prev, servers: { ...prev.servers } };
+                  delete next.servers[id];
+                  return next;
+                });
+              }}
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>
 
       <div className="messages-section">
-        <h2>Server Data</h2>
-        <h3>Tools</h3>
-        {mcpState.tools.map((tool) => (
-          <div key={`${tool.name}-${tool.serverId}`}>
-            <b>{tool.name}</b>
-            <pre className="code">{JSON.stringify(tool, null, 2)}</pre>
-          </div>
-        ))}
-
-        <h3>Prompts</h3>
-        {mcpState.prompts.map((prompt) => (
-          <div key={`${prompt.name}-${prompt.serverId}`}>
-            <b>{prompt.name}</b>
-            <pre className="code">{JSON.stringify(prompt, null, 2)}</pre>
-          </div>
-        ))}
-
-        <h3>Resources</h3>
-        {mcpState.resources.map((resource) => (
-          <div key={`${resource.name}-${resource.serverId}`}>
-            <b>{resource.name}</b>
-            <pre className="code">{JSON.stringify(resource, null, 2)}</pre>
-          </div>
-        ))}
+        <h2>Chat</h2>
+        <Chat />
       </div>
     </div>
   );

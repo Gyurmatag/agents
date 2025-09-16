@@ -29,6 +29,6 @@
     }
   },
   "vars": {
-    "HOST": "<DEPLOYED_HOSTNAME>"
+    "HOST": "http://localhost:5173"
   }
 }
